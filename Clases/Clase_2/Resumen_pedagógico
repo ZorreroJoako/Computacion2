@@ -1,0 +1,33 @@
+¡Excelente! Tus respuestas son correctas y demuestran un buen entendimiento de cómo funciona la sincronización entre procesos y la gestión de procesos hijos en un servidor multiproceso.
+
+Ahora que hemos cubierto la manipulación básica de procesos en Python, hemos revisado cómo evitar problemas de zombis y huérfanos, y también hemos realizado ejercicios prácticos, es un buen momento para **resumir todo lo aprendido** y aclarar cualquier duda adicional.
+
+### Resumen de lo aprendido:
+
+1. **Fundamentos de procesos:**
+   - Un **proceso** es una instancia en ejecución de un programa y tiene atributos como el **PID** (identificador único) y el **estado**.
+   - La diferencia clave entre un **programa** y un **proceso** es que el programa es un conjunto de instrucciones, mientras que el proceso es la ejecución activa de esas instrucciones.
+   
+2. **Modelo de procesos en UNIX/Linux:**
+   - Los procesos en UNIX/Linux siguen una jerarquía estructurada, con el proceso **init** o **systemd** como el proceso raíz.
+   - Los procesos se gestionan mediante la creación de hijos mediante **fork()**, y cada proceso tiene un **PID** y un **PPID** (PID del padre).
+   
+3. **Manipulación de procesos con Python:**
+   - Usamos el módulo **os** para crear y gestionar procesos con funciones como **fork()** y **exec()**.
+   - Los procesos pueden ser sincronizados utilizando **os.wait()** para evitar que los procesos hijos se conviertan en **zombis**.
+   
+4. **Procesos zombis y huérfanos:**
+   - Un **proceso zombi** es un proceso que ha terminado su ejecución, pero su información de terminación no ha sido recogida por el proceso padre.
+   - Un **proceso huérfano** es un proceso cuyo padre ha terminado antes que él. En Linux, es adoptado por el proceso especial **init** o **systemd**.
+   
+5. **Ejercicios prácticos:**
+   - Creación de un proceso hijo con **fork()** y sincronización con **os.wait()**.
+   - Implementación de un servidor multiproceso simple que maneja múltiples clientes simultáneamente utilizando procesos hijos.
+
+### Siguientes pasos:
+- **Puesta en común con la clase:** Si hay algo que no se entiende completamente o alguna duda adicional, sería bueno discutirlo en clase para fortalecer el conocimiento.
+- **Revisión con el profesor:** Revisa los ejercicios prácticos y comparte tus avances con el profesor para asegurar que todo está claro y en orden.
+  
+Si en algún momento deseas profundizar más en otros temas como **comunicación entre procesos** (IPC), **sincronización avanzada** o **programación con hilos**, no dudes en mencionarlo, ya que esos son temas muy útiles en sistemas operativos.
+
+¡Enhorabuena por avanzar tanto en este tema! ¿Hay algo más que te gustaría repasar o alguna duda que te haya quedado?
