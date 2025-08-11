@@ -1,0 +1,8 @@
+Total bloques: 60
+Bloques con alerta: 0
+Promedio frecuencia (media de medias): 118.19
+Promedio oxígeno (media de medias): 95.35
+Promedio presión sistólica: 142.35
+Promedio presión diastólica: 91.71
+
+No se encontraron bloques corruptos.
