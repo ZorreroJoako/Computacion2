@@ -37,3 +37,9 @@ Recomendaciones
 Si el proceso se interrumpe manualmente (Ctrl+C), el sistema intenta cerrar procesos y persistir lo escrito.
 
 Para inspeccionar la cadena: abrir blockchain.json con un visor de texto.
+
+En este programa utilicé Pipes y Queues porque cumplen funciones distintas y complementarias en la comunicación entre procesos:
+
+Las Pipes se usaron para enviar los paquetes completos generados en el proceso principal hacia cada uno de los procesos analizadores. Los pipes son ideales en este caso porque permiten una comunicación punto a punto, directa y ordenada, asegurando que cada analizador reciba exactamente la misma información de entrada sin necesidad de compartir una cola común.
+
+Las Queues se usaron para que cada analizador pueda enviar sus resultados procesados al proceso verificador. Las colas permiten comunicación unidireccional y segura entre múltiples productores y un consumidor, evitando condiciones de carrera y manejando automáticamente la sincronización de mensajes. De esta forma, los analizadores pueden trabajar en paralelo y el verificador recibe sus salidas de manera ordenada y sin bloqueos.
