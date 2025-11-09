@@ -1,5 +1,6 @@
 # TP2 - Sistema de Scraping y Análisis Web Distribuido
-
+Alumno:Zorrero Joaquín
+Carrera:Ingeniería En Computación
 ## 📜 Descripción del Proyecto
 
 Este proyecto implementa un sistema distribuido de dos servidores en Python para realizar **scraping web asíncrono** y **procesamiento paralelo (CPU-bound)**, cumpliendo con los requerimientos de la asignatura Computación II.
