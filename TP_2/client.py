@@ -4,7 +4,7 @@ import sys
 import json
 import argparse
 
-# Configuración del Servidor A (Asegúrate de que coincida con cómo lo inicializas)
+# Configuración del Servidor A 
 SERVER_A_IP = '127.0.0.1'
 SERVER_A_PORT = 8080 
 DEFAULT_URL = 'https://www.example.com'
