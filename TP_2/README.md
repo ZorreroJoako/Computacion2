@@ -44,10 +44,17 @@ Para ejecutar el proyecto, se requiere Python 3.8+ y las siguientes librerías:
 
 El sistema debe iniciarse en orden (Servidor B, luego Servidor A) antes de ejecutar el cliente.
 
-### 1. Iniciar Servidor B (Procesamiento) - 🟡 Terminal 1
-
-Este servidor gestiona la carga CPU-bound en paralelo.
+### Instrucciones de Inicio
 
 ```bash
-# Sintaxis: python3 server_processing.py -i <IP_ESCUCHA> -p <PUERTO> -n <PROCESOS>
+# PASO 1: Iniciar Servidor B (Procesamiento) - 🟡 Terminal 1
+# Este servidor escucha en 8001 y gestiona la carga CPU-bound.
 python3 server_processing.py -i 127.0.0.1 -p 8001 -n 4
+
+# PASO 2: Iniciar Servidor A (Scraping y Coordinación) - 🟢 Terminal 2
+# Este servidor escucha en 8080 y se conecta al Servidor B en 8001.
+python3 server_scraping.py -i 127.0.0.1 -p 8080 --processor-ip 127.0.0.1 --processor-port 8001
+
+# PASO 3: Ejecutar Cliente de Prueba - 🔵 Terminal 3
+# El cliente simula una petición al Servidor A.
+python3 client.py [https://www.wikipedia.org](https://www.wikipedia.org)
