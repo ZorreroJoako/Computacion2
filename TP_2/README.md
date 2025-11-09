@@ -31,10 +31,18 @@ El cliente final solo interactúa con el Servidor A. La comunicación por socket
 
 Para ejecutar el proyecto, se requiere Python 3.8+ y las siguientes librerías:
 
-1.  **Instalar dependencias:**
-    ```bash
-    pip install aiohttp beautifulsoup4 lxml Pillow selenium requests
-    ```
+1. Entorno Virtual e Instalación de Librerías
+
+Accede a la carpeta raíz del proyecto (`TP2/`) e inicia el entorno virtual:
+
+```bash
+# Crear y activar el entorno virtual
+python3 -m venv venv
+source venv/bin/activate  # En Linux/macOS
+# o venv\Scripts\activate.bat en Windows
+
+# Instalar todas las dependencias
+pip install aiohttp beautifulsoup4 lxml Pillow selenium requests
 
 2.  **Configurar WebDriver:**
     El sistema utiliza **Selenium** para capturas y análisis. Debe tener un **WebDriver** (como **ChromeDriver** o **GeckoDriver**) instalado en el sistema y accesible desde el `PATH` del sistema operativo.
