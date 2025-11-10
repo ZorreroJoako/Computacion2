@@ -1,5 +1,6 @@
 # TP2 - Sistema de Scraping y Análisis Web Distribuido
-
+Alumno:Zorrero Joaquín
+Carrera:Ingeniería En Computación
 ## 📜 Descripción del Proyecto
 
 Este proyecto implementa un sistema distribuido de dos servidores en Python para realizar **scraping web asíncrono** y **procesamiento paralelo (CPU-bound)**, cumpliendo con los requerimientos de la asignatura Computación II.
@@ -30,10 +31,18 @@ El cliente final solo interactúa con el Servidor A. La comunicación por socket
 
 Para ejecutar el proyecto, se requiere Python 3.8+ y las siguientes librerías:
 
-1.  **Instalar dependencias:**
-    ```bash
-    pip install aiohttp beautifulsoup4 lxml Pillow selenium requests
-    ```
+1. Entorno Virtual e Instalación de Librerías
+
+Accede a la carpeta raíz del proyecto (`TP2/`) e inicia el entorno virtual:
+
+```bash
+# Crear y activar el entorno virtual
+python3 -m venv venv
+source venv/bin/activate  # En Linux/macOS
+# o venv\Scripts\activate.bat en Windows
+
+# Instalar todas las dependencias
+pip install aiohttp beautifulsoup4 lxml Pillow selenium requests
 
 2.  **Configurar WebDriver:**
     El sistema utiliza **Selenium** para capturas y análisis. Debe tener un **WebDriver** (como **ChromeDriver** o **GeckoDriver**) instalado en el sistema y accesible desde el `PATH` del sistema operativo.
@@ -44,10 +53,17 @@ Para ejecutar el proyecto, se requiere Python 3.8+ y las siguientes librerías:
 
 El sistema debe iniciarse en orden (Servidor B, luego Servidor A) antes de ejecutar el cliente.
 
-### 1. Iniciar Servidor B (Procesamiento) - 🟡 Terminal 1
-
-Este servidor gestiona la carga CPU-bound en paralelo.
+### Instrucciones de Inicio
 
 ```bash
-# Sintaxis: python3 server_processing.py -i <IP_ESCUCHA> -p <PUERTO> -n <PROCESOS>
+# PASO 1: Iniciar Servidor B (Procesamiento) - 🟡 Terminal 1
+# Este servidor escucha en 8001 y gestiona la carga CPU-bound.
 python3 server_processing.py -i 127.0.0.1 -p 8001 -n 4
+
+# PASO 2: Iniciar Servidor A (Scraping y Coordinación) - 🟢 Terminal 2
+# Este servidor escucha en 8080 y se conecta al Servidor B en 8001.
+python3 server_scraping.py -i 127.0.0.1 -p 8080 --processor-ip 127.0.0.1 --processor-port 8001
+
+# PASO 3: Ejecutar Cliente de Prueba - 🔵 Terminal 3
+# El cliente simula una petición al Servidor A.
+python3 client.py [https://www.wikipedia.org](https://www.wikipedia.org)
