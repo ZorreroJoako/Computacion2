@@ -66,4 +66,4 @@ python3 server_scraping.py -i 127.0.0.1 -p 8080 --processor-ip 127.0.0.1 --proce
 
 # PASO 3: Ejecutar Cliente de Prueba - 🔵 Terminal 3
 # El cliente simula una petición al Servidor A.
-python3 client.py [https://www.wikipedia.org](https://www.wikipedia.org)
+python3 client.py https://www.google.com.ar
