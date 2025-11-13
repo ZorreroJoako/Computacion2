@@ -68,3 +68,4 @@ python3 server_scraping.py -i 127.0.0.1 -p 8080 --processor-ip 127.0.0.1 --proce
 # El cliente simula una petición al Servidor A.
 python3 client.py https://www.google.com.ar
 Para IPv6 debe usarse el formato \[<dirección IPv6>\]
+python3 client.py https://google.com --ip \[::\] --port 8001
