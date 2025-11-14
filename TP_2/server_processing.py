@@ -5,6 +5,7 @@ import sys
 import os
 import json
 import time 
+import socket # ¡Importación clave para soporte de red!
 
 # IMPORTACIONES CLAVE
 from common.protocol import decode_header, encode_message, HEADER_SIZE
@@ -74,7 +75,6 @@ class ProcessingTCPHandler(socketserver.BaseRequestHandler):
             request_data = deserialize_data(data_bytes)
             
             # 3. Enviar al Pool de Procesos y esperar resultado
-            # pool.apply() es síncrono, lo que hace que este hilo de socketserver espere el resultado.
             result = pool.apply(worker_process, args=(request_data,))
             
             # 4. Enviar el resultado de vuelta al Servidor A
@@ -83,7 +83,6 @@ class ProcessingTCPHandler(socketserver.BaseRequestHandler):
 
         except Exception as e:
             print(f"Error en el Handler del Servidor B: {e}", file=sys.stderr)
-            # Intentar enviar un mensaje de error si es posible
             error_response = encode_message({"error": str(e), "status": "processor_failure"})
             try:
                 self.request.sendall(error_response)
@@ -91,19 +90,36 @@ class ProcessingTCPHandler(socketserver.BaseRequestHandler):
                 pass 
 
 # -------------------------------------------------------------------
-# Inicialización del Servidor (ThreadingMixIn para manejar múltiples conexiones)
+# Inicialización del Servidor (Soporte IPv4 e IPv6)
 # -------------------------------------------------------------------
-class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+
+class DualStackTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    address_family = socket.AF_INET # Por defecto
+
+    def server_bind(self):
+        # Si la IP es IPv6 (contiene ':'), ajustamos la familia del socket.
+        if ':' in self.server_address[0]:
+            self.address_family = socket.AF_INET6
+            
+            try:
+                # Deshabilita el mapeo de IPv4 en IPv6 para evitar errores de enlace
+                self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+            except Exception:
+                pass # Ignorar si la opción no está disponible
+            
+        return super().server_bind()
+
+
+class ThreadedTCPServer(DualStackTCPServer):
     pass
     
 def run_server_b(ip, port, num_processes):
     
-    # Inicializa el Pool de Procesos
     with mp.Pool(processes=num_processes) as pool:
         
         ThreadedTCPServer.allow_reuse_address = True
-        server = ThreadedTCPServer((ip, port), ProcessingTCPHandler)
-        server.process_pool = pool # Inyecta el pool en el handler
+        server = ThreadedTCPServer((ip, port), ProcessingTCPHandler) 
+        server.process_pool = pool 
         
         print(f"Servidor B (Procesamiento) escuchando en {ip}:{port} con {num_processes} procesos.")
         
@@ -116,9 +132,7 @@ def run_server_b(ip, port, num_processes):
 
 
 if __name__ == '__main__':
-    # -------------------------------------------------------------------
-    # Interfaz de Línea de Comandos (argparse)
-    # -------------------------------------------------------------------
+    # ... (Manejo de argparse) ...
     parser = argparse.ArgumentParser(description="Servidor de Procesamiento Distribuido")
     parser.add_argument('-i', '--ip', required=True, help="Dirección de escucha (ej: 127.0.0.1)")
     parser.add_argument('-p', '--port', required=True, type=int, help="Puerto de escucha (ej: 8001)")
