@@ -68,11 +68,12 @@ python3 server_scraping.py -i 127.0.0.1 -p 8080 --processor-ip 127.0.0.1 --proce
 # El cliente simula una petición al Servidor A.
 python3 client.py https://www.google.com.ar
 
-Para IPv6 debe usarse el formato \[<dirección IPv6>\]
+Para IPv6:
 # PASO 1: Iniciar Servidor B (Procesamiento) - 🟡 Terminal 1
-python3 server_processing.py -i :: -p 8002 -n 4
+python3 server_processing.py -i ::1 -p 8001 -n 4
 
 # PASO 2: Iniciar Servidor A (Scraping y Coordinación) - 🟢 Terminal 2
-python3 server_scraping.py -i :: -p 8001 --processor-ip :: --processor-port 8002
+python3 server_scraping.py -i ::1 -p 8080 --processor-ip ::1 --processor-port 8001
+
 # PASO 3: Ejecutar Cliente de Prueba - 🔵 Terminal 3
-python3 client.py https://google.com --ip \[::\] --port 8001
+python3 client.py https://www.google.com.ar --ip ::1 -p 8080
