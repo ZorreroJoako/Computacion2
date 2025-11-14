@@ -42,7 +42,7 @@ source venv/bin/activate  # En Linux/macOS
 # o venv\Scripts\activate.bat en Windows
 
 # Instalar todas las dependencias
-pip install aiohttp beautifulsoup4 lxml Pillow selenium requests
+pip install -r requirements.txt
 
 2.  **Configurar WebDriver:**
     El sistema utiliza **Selenium** para capturas y análisis. Debe tener un **WebDriver** (como **ChromeDriver** o **GeckoDriver**) instalado en el sistema y accesible desde el `PATH` del sistema operativo.
@@ -67,3 +67,12 @@ python3 server_scraping.py -i 127.0.0.1 -p 8080 --processor-ip 127.0.0.1 --proce
 # PASO 3: Ejecutar Cliente de Prueba - 🔵 Terminal 3
 # El cliente simula una petición al Servidor A.
 python3 client.py https://www.google.com.ar
+
+Para IPv6 debe usarse el formato \[<dirección IPv6>\]
+# PASO 1: Iniciar Servidor B (Procesamiento) - 🟡 Terminal 1
+python3 server_processing.py -i :: -p 8002 -n 4
+
+# PASO 2: Iniciar Servidor A (Scraping y Coordinación) - 🟢 Terminal 2
+python3 server_scraping.py -i :: -p 8001 --processor-ip :: --processor-port 8002
+# PASO 3: Ejecutar Cliente de Prueba - 🔵 Terminal 3
+python3 client.py https://google.com --ip \[::\] --port 8001
