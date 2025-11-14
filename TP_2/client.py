@@ -1,9 +1,9 @@
-import aiohttpimport aiohttp
+import aiohttpimport aiohttpimport aiohttp
 import asyncio
 import sys
 import json
 import argparse
-import ipaddress # Necesario para detectar si la IP es IPv6
+import ipaddress 
 
 # Configuración del Servidor A 
 SERVER_A_IP = '127.0.0.1'
@@ -17,12 +17,10 @@ def format_host(ip: str) -> str:
     que es requerido por el estándar de URL HTTP.
     """
     try:
-        # Usa la librería ipaddress para verificar la versión
         if ipaddress.ip_address(ip).version == 6:
-            return f'[{ip}]' # Formato requerido: [::1]
+            return f'[{ip}]'
         return ip
     except ValueError:
-        # Devuelve la cadena original si no es una IP válida
         return ip
 # ---------------------------------------------
 
@@ -31,36 +29,31 @@ async def run_client(target_url: str, ip: str, port: int):
     Realiza una petición GET asíncrona al Servidor A con la URL de destino.
     """
     
-    # Aplicar el formato IP antes de construir la URL
+    # *** CORRECCIÓN: Aplicar el formato IP antes de construir la URL ***
     host_formatted = format_host(ip) 
-    
-    # La URL se construye con la IP formateada (que incluirá [] si es IPv6)
     server_a_url = f'http://{host_formatted}:{port}/scrape?url={target_url}'
+    # ------------------------------------------------------------------
     
     print(f"--- 🚀 INICIANDO PRUEBA ---")
     print(f"Objetivo: {target_url}")
     print(f"Conectando a Servidor A en: {server_a_url}")
     
-    # Timeout total alto (ej. 10 minutos) para dar tiempo al Servidor B (screenshots)
+    # Timeout total alto (ej. 10 minutos)
     timeout_config = aiohttp.ClientTimeout(total=600) 
     
     async with aiohttp.ClientSession(timeout=timeout_config) as session:
         try:
-            # 1. Petición al Servidor A
             async with session.get(server_a_url) as resp:
                 
                 print(f"Status HTTP recibido de Servidor A: {resp.status}")
                 
-                # 2. Deserialización de la respuesta JSON consolidada
                 data = await resp.json()
                 
-                # 3. Análisis y presentación
                 if resp.status == 200 and data.get('status') in ('success', 'partial_success'):
                     print("\n✅ ÉXITO DE INTEGRACIÓN:")
                     print(f"Status Consolidado: **{data.get('status')}**")
                     print(f"Título Scrapeado: **{data['scraping_data']['title']}**")
                     
-                    # Verificación de datos de Servidor B
                     if 'screenshot' in data['processing_data'] and data['processing_data']['screenshot']:
                         print(f"Resultado B (Screenshot): **Recibido ({len(data['processing_data']['screenshot'])} bytes Base64)**")
                     else:
@@ -69,7 +62,6 @@ async def run_client(target_url: str, ip: str, port: int):
                     print(f"Tiempo de Carga Reportado: **{data['processing_data']['performance'].get('load_time_ms', 'N/A')} ms**")
                     
                     print("\n--- Respuesta JSON Completa ---")
-                    # Imprimir el JSON con formato legible
                     print(json.dumps(data, indent=4, ensure_ascii=False))
                     
                 else:
@@ -92,7 +84,6 @@ def main():
 
     args = parser.parse_args()
     
-    # Ejecutar la función asíncrona
     try:
         asyncio.run(run_client(args.url, args.ip, args.port))
     except KeyboardInterrupt:
