@@ -1,4 +1,4 @@
-import argparse
+import argparseimport argparseimport argparse
 import asyncio
 import logging
 import datetime
@@ -40,11 +40,20 @@ SCRAPING_TIMEOUT = 30
 # Importamos aiohttp para el fetch
 from aiohttp import ClientTimeout
 
+# CORRECCIÓN: Encabezados para simular un navegador y evitar el error 403
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+}
+
+
 async def fetch_url(url: str) -> str:
     """Realiza una petición GET asíncrona a la URL y devuelve el contenido HTML."""
     timeout = ClientTimeout(total=SCRAPING_TIMEOUT)
     
-    async with aiohttp.ClientSession(timeout=timeout) as session:
+    # CORRECCIÓN: Usar headers al crear la sesión
+    async with aiohttp.ClientSession(timeout=timeout, headers=HEADERS) as session:
         try:
             async with session.get(url, allow_redirects=True) as response:
                 if response.status >= 400:
@@ -179,6 +188,7 @@ async def handle_scrape(request):
     except asyncio.TimeoutError:
         return web.json_response({'status': 'error', 'message': 'Scraping request timed out (30s).'}, status=504)
     except ConnectionError as e:
+        # Aquí se captura el error 403/502/etc.
         return web.json_response({'status': 'error', 'message': f'Network error during scraping: {e}'}, status=502)
     except Exception as e:
         return web.json_response({'status': 'error', 'message': f'Scraping failed: {e}'}, status=500)

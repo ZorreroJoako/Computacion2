@@ -3,23 +3,45 @@ import asyncio
 import sys
 import json
 import argparse
+import ipaddress # Necesario para detectar si la IP es IPv6
 
 # Configuración del Servidor A 
 SERVER_A_IP = '127.0.0.1'
 SERVER_A_PORT = 8080 
 DEFAULT_URL = 'https://www.example.com'
 
+# --- FUNCIÓN DE FORMATO IP (SOPORTE IPv6) ---
+def format_host(ip: str) -> str:
+    """
+    Envuelve la IP entre corchetes si es IPv6 (ej. [::1]), 
+    que es requerido por el estándar de URL HTTP.
+    """
+    try:
+        # Usa la librería ipaddress para verificar la versión
+        if ipaddress.ip_address(ip).version == 6:
+            return f'[{ip}]' # Formato requerido: [::1]
+        return ip
+    except ValueError:
+        # Devuelve la cadena original si no es una IP válida
+        return ip
+# ---------------------------------------------
+
 async def run_client(target_url: str, ip: str, port: int):
     """
     Realiza una petición GET asíncrona al Servidor A con la URL de destino.
     """
-    server_a_url = f'http://{ip}:{port}/scrape?url={target_url}'
+    
+    # Aplicar el formato IP antes de construir la URL
+    host_formatted = format_host(ip) 
+    
+    # La URL se construye con la IP formateada (que incluirá [] si es IPv6)
+    server_a_url = f'http://{host_formatted}:{port}/scrape?url={target_url}'
     
     print(f"--- 🚀 INICIANDO PRUEBA ---")
     print(f"Objetivo: {target_url}")
     print(f"Conectando a Servidor A en: {server_a_url}")
     
-    # Timeout total alto (ej. 10 minutos) para dar tiempo a Servidor B (screenshots)
+    # Timeout total alto (ej. 10 minutos) para dar tiempo al Servidor B (screenshots)
     timeout_config = aiohttp.ClientTimeout(total=600) 
     
     async with aiohttp.ClientSession(timeout=timeout_config) as session:
@@ -42,7 +64,7 @@ async def run_client(target_url: str, ip: str, port: int):
                     if 'screenshot' in data['processing_data'] and data['processing_data']['screenshot']:
                         print(f"Resultado B (Screenshot): **Recibido ({len(data['processing_data']['screenshot'])} bytes Base64)**")
                     else:
-                         print("Resultado B (Screenshot): ⚠️ No recibido o fallido.")
+                        print("Resultado B (Screenshot): ⚠️ No recibido o fallido.")
 
                     print(f"Tiempo de Carga Reportado: **{data['processing_data']['performance'].get('load_time_ms', 'N/A')} ms**")
                     
